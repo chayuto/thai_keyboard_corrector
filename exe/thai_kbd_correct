@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/thai_keyboard_corrector'
+require 'optparse'
+
+options = { force: nil }
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: thai_kbd_correct [options] <text>'
+  opts.on('-fLAYOUT', '--force=LAYOUT', 'Force convert (en|th)') { |v| options[:force] = v }
+  opts.on('-h', '--help', 'Show help') do
+    puts opts
+    exit
+  end
+end.parse!
+
+input_text = ARGV.empty? ? $stdin.read : ARGV.join(' ')
+
+if options[:force] == 'th'
+  puts ThaiKeyboardCorrector::Mapping.map_eng_to_thai(input_text)
+elsif options[:force] == 'en'
+  puts ThaiKeyboardCorrector::Mapping.map_thai_to_eng(input_text)
+else
+  puts ThaiKeyboardCorrector.correct(input_text)
+end
