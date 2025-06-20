@@ -54,15 +54,19 @@ module ThaiKeyboardCorrector
 
     # helpers ----------------------------------------------------------------
     def char_stats(str)
-      thai  = str.each_char.count { |c| THAI_RANGE.include?(c.ord) }
-      latin = str.each_char.count { |c| c =~ /[A-Za-z]/ }
+      clean = str.gsub(/\s+/, '') # remove ALL Unicode whitespace
+      thai  = clean.each_char.count { |c| THAI_RANGE.include?(c.ord) }
+      latin = clean.each_char.count { |c| c =~ /[A-Za-z]/ }
       [thai, latin]
     end
     private_class_method :char_stats
 
     def hit_ratio(str, table)
-      hits = str.each_char.count { |c| table.key?(c) }
-      hits.to_f / str.length
+      chars = str.gsub(/\s+/, '').chars # whitespace-free array
+      return 0.0 if chars.empty?
+
+      hits = chars.count { |c| table.key?(c) }
+      hits.to_f / chars.length
     end
     private_class_method :hit_ratio
   end

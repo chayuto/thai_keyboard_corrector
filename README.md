@@ -33,10 +33,10 @@ require "thai_keyboard_corrector"
 
 # 1. Auto-correct if layout seems wrong
 ThaiKeyboardCorrector.correct("l;ylfu")   # => "สวัสดี"
-ThaiKeyboardCorrector.correct("ฟหกด")     # => "asdf"
+ThaiKeyboardCorrector.correct("้รทัืฟทำ รห")     # => "asdf"
 
 # 2. Detect layout (returns a Symbol)
-ThaiKeyboardCorrector.detect_layout("สวัสดี")  # => :thai
+ThaiKeyboardCorrector.detect_layout("้รทัืฟทำรห")  # => :thai
 ThaiKeyboardCorrector.detect_layout("l;ylfu")  # => :thai_in_en
 ThaiKeyboardCorrector.detect_layout("ฟหกด")    # => :en_in_th
 ThaiKeyboardCorrector.detect_layout("helloส")  # => :mixed
