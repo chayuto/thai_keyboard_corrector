@@ -2,7 +2,7 @@
 
 module ThaiKeyboardCorrector
   # Mapping module provides methods to convert between English and Thai characters
-  module mapping
+  module Mapping
     # 1. Base map – lower-case EN → Thai Kedmanee
     BASE = {
       'q' => 'ๆ', 'w' => 'ไ', 'e' => 'ำ', 'r' => 'พ', 't' => 'ะ',
