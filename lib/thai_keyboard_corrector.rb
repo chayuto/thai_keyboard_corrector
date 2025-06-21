@@ -13,11 +13,11 @@ module ThaiKeyboardCorrector
   # @return [String] corrected or original string
   def correct(str)
     case detect_layout(str)
-    when :thai_in_en
+    when :thai_in_en  # mostly Latin → convert EN→TH
       Mapping.map_eng_to_thai(str)
-    when :en_in_th
+    when :en_in_th    # mostly Thai  → convert TH→EN
       Mapping.map_thai_to_eng(str)
-    else
+    else              # :thai, :en, :mixed, :unknown
       str
     end
   end

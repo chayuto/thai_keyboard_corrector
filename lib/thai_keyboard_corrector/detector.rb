@@ -13,61 +13,27 @@ module ThaiKeyboardCorrector
     # Returns :thai_in_en, :en_in_th, :thai, :en, :mixed, :unknown
     def detect_layout(str)
       clean = str.strip
-      return :unknown if clean.empty?
+      clean_no_ws = clean.gsub(/\s+/, '') # strip ALL whitespace
 
-      thai_cnt, latin_cnt = char_stats(clean)
-      return :unknown if thai_cnt.zero? && latin_cnt.zero?
+      return :unknown if clean_no_ws.empty?
 
-      # ---------- pure-Latin ----------
-      if thai_cnt.zero?
-        # ▼ Treat 1-3-letter words as Thai-in-EN (they’re almost never real English)
-        return :thai_in_en if clean.length <= 3 &&
-                              hit_ratio(clean, Mapping::ENG_TO_THAI) >= FULL_HIT
+      thai_cnt, latin_cnt = char_stats(clean) # char_stats already ignores ws
 
-        return :thai_in_en if clean.match?(/[^A-Za-z]/) &&
-                              hit_ratio(clean, Mapping::ENG_TO_THAI) >= THRESHOLD
+      # Majority-vote rule ----------------------------------------------
+      return :en_in_th   if thai_cnt  > latin_cnt   # mostly Thai glyphs
+      return :thai_in_en if latin_cnt > thai_cnt    # mostly Latin letters
 
-        return :en
-      end
-
-      # ---------- pure-Thai ----------
-      if latin_cnt.zero?
-        return :thai if clean.length < 4 # ignore tiny words like “ดี”
-
-        eng = Mapping.map_thai_to_eng(clean)
-        vowelish = eng.count(VOWELS).positive?
-        if eng.match?(/\A[a-z]+\z/i) && vowelish &&
-           hit_ratio(clean, Mapping::THAI_TO_ENG) >= THRESHOLD
-          return :en_in_th
-        end
-
-        return :thai
-      end
-
-      # ---------- mixed ----------
-      return :mixed if thai_cnt.positive? && latin_cnt.positive?
-      return :thai_in_en if hit_ratio(clean, Mapping::ENG_TO_THAI) >= THRESHOLD
-      return :en_in_th   if hit_ratio(clean, Mapping::THAI_TO_ENG) >= THRESHOLD
-
-      :mixed
+      # If counts are equal (or zero) we can’t be sure
+      thai_cnt.zero? && latin_cnt.zero? ? :unknown : :mixed
     end
 
     # helpers ----------------------------------------------------------------
     def char_stats(str)
-      clean = str.gsub(/\s+/, '') # remove ALL Unicode whitespace
+      clean = str.gsub(/\s+/, '')
       thai  = clean.each_char.count { |c| THAI_RANGE.include?(c.ord) }
-      latin = clean.each_char.count { |c| c =~ /[A-Za-z]/ }
+      latin = clean.each_char.count { |c| c.match?(/[A-Za-z]/) }
       [thai, latin]
     end
     private_class_method :char_stats
-
-    def hit_ratio(str, table)
-      chars = str.gsub(/\s+/, '').chars # whitespace-free array
-      return 0.0 if chars.empty?
-
-      hits = chars.count { |c| table.key?(c) }
-      hits.to_f / chars.length
-    end
-    private_class_method :hit_ratio
   end
 end

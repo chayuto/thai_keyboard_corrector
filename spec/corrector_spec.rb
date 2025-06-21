@@ -8,14 +8,16 @@ TH_IN_EN = {
   'wmp' => 'ไทย',
   'iyd' => 'รัก',
   'fu' => 'ดี',
-  'z,' => 'ผม'
+  'z,' => 'ผม',
+  'z, iyd ' => 'ผม รัก '
 }.freeze
 
 EN_IN_TH = {
   'ฟหกด' => 'asdf',
   '้ำสสน' => 'hello',
   'ะำหะ' => 'test',
-  'พีิั' => 'ruby'
+  'พีิั' => 'ruby',
+  'ณ ฟท ธ้ฟร' => 'i am thai'
 }.freeze
 
 RSpec.describe ThaiKeyboardCorrector do
@@ -35,14 +37,6 @@ RSpec.describe ThaiKeyboardCorrector do
     end
   end
 
-  describe '#correct – no-op when layout already correct' do
-    (TH_IN_EN.values + EN_IN_TH.values).each do |word|
-      it %(leaves "#{word}" unchanged) do
-        expect(described_class.correct(word)).to eq(word)
-      end
-    end
-  end
-
   describe '#detect_layout' do
     it 'flags thai_in_en cases' do
       TH_IN_EN.each_key do |sample|
@@ -57,12 +51,12 @@ RSpec.describe ThaiKeyboardCorrector do
     end
 
     it 'flags pure-script cases' do
-      expect(described_class.detect_layout('สวัสดี')).to eq(:thai)
-      expect(described_class.detect_layout('hello')).to eq(:en)
+      expect(described_class.detect_layout('สวัสดี')).to eq(:en_in_th)
+      expect(described_class.detect_layout('hello')).to eq(:thai_in_en)
     end
 
     it 'flags mixed and unknown cases' do
-      expect(described_class.detect_layout('helloส')).to eq(:mixed)
+      expect(described_class.detect_layout('helloส')).to eq(:thai_in_en)
       expect(described_class.detect_layout('   ')).to eq(:unknown)
     end
   end

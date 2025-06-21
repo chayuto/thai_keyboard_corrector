@@ -20,7 +20,7 @@
 
 ```bash
 gem install thai_keyboard_corrector
-````
+```
 
 (หรือเพิ่ม `gem "thai_keyboard_corrector"` ใน Gemfile)
 
