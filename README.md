@@ -36,18 +36,16 @@ ThaiKeyboardCorrector.correct("l;ylfu")   # => "สวัสดี"
 ThaiKeyboardCorrector.correct("้รทัืฟทำ รห")     # => "himyname is"
 
 # 2. Detect layout (returns a Symbol)
-ThaiKeyboardCorrector.detect_layout("้รทัืฟทำรห")  # => :thai
+ThaiKeyboardCorrector.detect_layout("้รทัืฟทำรห")  # => :en_in_th
 ThaiKeyboardCorrector.detect_layout("l;ylfu")  # => :thai_in_en
 ThaiKeyboardCorrector.detect_layout("ฟหกด")    # => :en_in_th
-ThaiKeyboardCorrector.detect_layout("helloส")  # => :mixed
+ThaiKeyboardCorrector.detect_layout("helloส")  # => :thai_in_en
 ```
 
 ### Detection Symbols
 
 | Symbol        | Meaning                                                      |
 | ------------- | ------------------------------------------------------------ |
-| `:thai`       | Normal Thai text                                             |
-| `:en`         | Normal English text                                          |
 | `:thai_in_en` | Thai characters typed on **EN** layout (needs flip EN→TH)    |
 | `:en_in_th`   | English characters typed on **TH** layout (needs flip TH→EN) |
 | `:mixed`      | Contains both Thai & English letters in correct positions    |
